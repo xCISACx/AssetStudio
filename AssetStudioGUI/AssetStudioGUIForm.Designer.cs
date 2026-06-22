@@ -34,6 +34,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recentFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.extractFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -227,6 +228,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadFileToolStripMenuItem,
             this.loadFolderToolStripMenuItem,
+            this.recentFoldersToolStripMenuItem,
             this.toolStripMenuItem1,
             this.extractFileToolStripMenuItem,
             this.extractFolderToolStripMenuItem});
@@ -247,6 +249,12 @@
             this.loadFolderToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.loadFolderToolStripMenuItem.Text = "Load folder";
             this.loadFolderToolStripMenuItem.Click += new System.EventHandler(this.loadFolder_Click);
+            // 
+			// recentFoldersToolStripMenuItem
+			// 
+            this.recentFoldersToolStripMenuItem.Name = "recentFoldersToolStripMenuItem";
+            this.recentFoldersToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.recentFoldersToolStripMenuItem.Text = "Recent Folders";
             // 
             // toolStripMenuItem1
             // 
@@ -1731,6 +1739,7 @@
         private System.Windows.Forms.TextBox treeSearch;
         private System.Windows.Forms.ToolStripMenuItem loadFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem recentFoldersToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader columnHeaderName;
         private System.Windows.Forms.ColumnHeader columnHeaderSize;
         private System.Windows.Forms.ColumnHeader columnHeaderType;

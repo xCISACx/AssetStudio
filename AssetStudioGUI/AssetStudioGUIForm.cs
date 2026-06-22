@@ -112,8 +112,25 @@ namespace AssetStudioGUI
         private bool treeRecursionEnabled = true;
         private bool isRecursionEvent = false;
 
-        private string openDirectoryBackup = string.Empty;
-        private string saveDirectoryBackup = string.Empty;
+        private string openDirectoryBackup
+        {
+            get => Properties.Settings.Default.LastLoadFolder ?? string.Empty;
+            set
+            {
+                Properties.Settings.Default.LastLoadFolder = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private string saveDirectoryBackup
+        {
+            get => Properties.Settings.Default.LastExportFolder ?? string.Empty;
+            set
+            {
+                Properties.Settings.Default.LastExportFolder = value;
+                Properties.Settings.Default.Save();
+            }
+        }
 
         private GUILogger logger;
 
@@ -132,6 +149,7 @@ namespace AssetStudioGUI
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             ConsoleWindow.RunConsole(Properties.Settings.Default.showConsole);
             InitializeComponent();
+            UpdateRecentFoldersMenu();
             ApplyColorTheme(out isDarkMode);
 
             var appAssembly = typeof(Program).Assembly.GetName();
@@ -204,8 +222,9 @@ namespace AssetStudioGUI
                     }
                 }
             }
-            await Task.Run(() => assetsManager.LoadFilesAndFolders(out openDirectoryBackup, pathList));
-            saveDirectoryBackup = openDirectoryBackup;
+            string tempPath = string.Empty;
+            await Task.Run(() => assetsManager.LoadFilesAndFolders(out tempPath, pathList));
+            openDirectoryBackup = tempPath;
             BuildAssetStructures();
         }
 
@@ -219,7 +238,9 @@ namespace AssetStudioGUI
                 if (pathList.Count == 0)
                     return;
                 ResetForm();
-                await Task.Run(() => assetsManager.LoadFilesAndFolders(out openDirectoryBackup, pathList));
+                string tempPath = string.Empty;
+                await Task.Run(() => assetsManager.LoadFilesAndFolders(out tempPath, pathList));
+                openDirectoryBackup = tempPath;
                 BuildAssetStructures();
             }
         }
@@ -231,7 +252,9 @@ namespace AssetStudioGUI
             if (openFolderDialog.ShowDialog(this) == DialogResult.OK)
             {
                 ResetForm();
-                await Task.Run(() => assetsManager.LoadFilesAndFolders(out openDirectoryBackup, openFolderDialog.Folder));
+                string tempPath = string.Empty;
+                await Task.Run(() => assetsManager.LoadFilesAndFolders(out tempPath, openFolderDialog.Folder));
+                openDirectoryBackup = tempPath;
                 BuildAssetStructures();
             }
         }
@@ -2713,6 +2736,74 @@ namespace AssetStudioGUI
             {
                 Studio.FbxSettings = Fbx.Settings.FromBase64(base64String);
             }
+        }
+        
+        private void UpdateRecentFoldersMenu()
+        {
+            recentFoldersToolStripMenuItem.DropDownItems.Clear();
+
+            if (Properties.Settings.Default.RecentFolders == null)
+            {
+                Properties.Settings.Default.RecentFolders = new System.Collections.Specialized.StringCollection();
+            }
+
+            foreach (string folder in Properties.Settings.Default.RecentFolders)
+            {
+                var item = new ToolStripMenuItem(folder);
+                item.Click += async (s, e) => {
+                    ResetForm();
+                    
+                    string tempPath = string.Empty;
+                    await Task.Run(() => assetsManager.LoadFilesAndFolders(out tempPath, folder));
+                    openDirectoryBackup = tempPath; // Assign the result back to your persistent property
+                    
+                    BuildAssetStructures();
+                    
+                    AddRecentFolder(folder);
+                };
+                recentFoldersToolStripMenuItem.DropDownItems.Add(item);
+            }
+
+            if (recentFoldersToolStripMenuItem.DropDownItems.Count > 0)
+            {
+                recentFoldersToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+                var clearItem = new ToolStripMenuItem("Clear History");
+                clearItem.Click += (s, e) => {
+                    Properties.Settings.Default.RecentFolders.Clear();
+                    Properties.Settings.Default.Save();
+                    UpdateRecentFoldersMenu();
+                };
+                recentFoldersToolStripMenuItem.DropDownItems.Add(clearItem);
+            }
+            else
+            {
+                var emptyItem = new ToolStripMenuItem("Empty");
+                emptyItem.Enabled = false;
+                recentFoldersToolStripMenuItem.DropDownItems.Add(emptyItem);
+            }
+        }
+
+        private void AddRecentFolder(string path)
+        {
+            if (Properties.Settings.Default.RecentFolders == null)
+            {
+                Properties.Settings.Default.RecentFolders = new System.Collections.Specialized.StringCollection();
+            }
+            
+            if (Properties.Settings.Default.RecentFolders.Contains(path))
+            {
+                Properties.Settings.Default.RecentFolders.Remove(path);
+            }
+
+            Properties.Settings.Default.RecentFolders.Insert(0, path);
+            
+            while (Properties.Settings.Default.RecentFolders.Count > 10)
+            {
+                Properties.Settings.Default.RecentFolders.RemoveAt(10);
+            }
+
+            Properties.Settings.Default.Save();
+            UpdateRecentFoldersMenu();
         }
 
         #region FMOD
