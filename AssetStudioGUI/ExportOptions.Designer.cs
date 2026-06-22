@@ -227,7 +227,9 @@
             this.filenameFormatComboBox.Items.AddRange(new object[] {
             "asset name",
             "asset name@pathID",
-            "pathID"});
+            "pathID",
+            "container name"
+            });
             this.filenameFormatComboBox.Location = new System.Drawing.Point(177, 35);
             this.filenameFormatComboBox.Name = "filenameFormatComboBox";
             this.filenameFormatComboBox.Size = new System.Drawing.Size(120, 21);

@@ -45,6 +45,7 @@ namespace AssetStudioCLI.Options
         AssetName,
         AssetName_PathID,
         PathID,
+        ContainerName
     }
 
     internal enum ExportListType

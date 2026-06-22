@@ -25,6 +25,21 @@ namespace AssetStudioCLI
                 case FilenameFormat.PathID:
                     fileName = item.m_PathID.ToString();
                     break;
+                case FilenameFormat.ContainerName:
+                    if (!string.IsNullOrEmpty(item.Container))
+                    {
+                        /* Takes "assets/.../ev_01_01/ev_01_01.prefab"
+                         Strips the directories and the .prefab extension
+                         Returns exactly "ev_01_01"
+                        */
+                        fileName = Path.GetFileNameWithoutExtension(item.Container);
+                    }
+                    else
+                    {
+                        /* Fallback to original asset name if the container is empty */
+                        fileName = item.Text;
+                    }
+                    break;
             }
             fullPath = Path.Combine(dir, fileName + extension);
             if (ExportPathHashSet.Add(fullPath))

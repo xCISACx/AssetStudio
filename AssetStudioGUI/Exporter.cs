@@ -24,6 +24,16 @@ namespace AssetStudioGUI
                 case 2: //pathID
                     fileName = item.m_PathID.ToString();
                     break;
+                case 3: //container name
+                    if (!string.IsNullOrEmpty(item.Container))
+                    {
+                        fileName = Path.GetFileNameWithoutExtension(item.Container);
+                    }
+                    else
+                    {
+                        fileName = FixFileName(item.Text);
+                    }
+                    break;
             }
             fullPath = Path.Combine(dir, fileName + extension);
             if (ExportPathHashSet.Add(fullPath))
